@@ -31,7 +31,7 @@ public class FlightController {
     public void createFlight(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A JSON representation of the flight")
                                  @RequestBody
                                  @NotNull Flight flight) {
-        flightService.insertWithEntityManager(flight);
+        flightService.insertWithQuery(flight);
     }
 
 }

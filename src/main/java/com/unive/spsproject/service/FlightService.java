@@ -18,5 +18,12 @@ public class FlightService {
         entityManager.persist(flight);
     }
 
+    @Transactional
+    public void insertWithQuery(Flight flight) {
+        entityManager.createNativeQuery("INSERT INTO flight (id,name) VALUES (?,?)")
+                .setParameter(1, flight.getId() )
+                .setParameter(2, flight.getName())
+                .executeUpdate();
+    }
 
 }
