@@ -1,4 +1,4 @@
-# sps
+# sp
 
 ## Import data in Postgres through PgAdmin
 
