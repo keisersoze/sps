@@ -1,0 +1,23 @@
+CREATE TABLE flights (
+    id SERIAL,
+    year int,
+    day_of_week int,
+    fl_date date,
+    op_carrier_airline_id int,
+    op_carrier_fl_num varchar(250),
+    origin_airport_id int,
+    origin varchar(250),
+    origin_city_name varchar(250),
+    origin_state_nm varchar(250),
+    dest_airport_id int,
+    dest varchar(250),
+    dest_city_name varchar(250),
+    dest_state_nm varchar(250),
+    dep_time varchar(250),
+    dep_delay float,
+    arr_time varchar(250),
+    arr_delay float,
+    cancelled float,
+    air_time float,
+    PRIMARY KEY (id)
+);
