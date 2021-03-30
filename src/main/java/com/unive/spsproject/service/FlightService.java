@@ -1,6 +1,7 @@
 package com.unive.spsproject.service;
 
 import com.unive.spsproject.model.Query1ResultDto;
+import com.unive.spsproject.model.Query2ResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,5 +58,28 @@ public class FlightService {
         return query1ResultDtoList;
     }
 
+    @Transactional(readOnly = true)
+    public List<Query2ResultDto> query2(LocalDate lowerDate, LocalDate upperDate, Double minDelay) {
+        List<Object[]> rows = entityManager.createNativeQuery(
+                "SELECT f.id, f.fl_date, f.origin_city_name, f.dest_city_name\n" +
+                        "FROM flights f\n" +
+                        "WHERE f.arr_delay > :minDelay AND f.fl_date between :lowerDate and :upperDate")
+                .setParameter("minDelay", minDelay)
+                .setParameter("lowerDate", Date.valueOf(lowerDate))
+                .setParameter("upperDate", Date.valueOf(upperDate))
+                .getResultList();
+
+        List<Query2ResultDto> query2ResultDtoList = new ArrayList<>();
+        for (Object[] row: rows) {
+            long id = Long.valueOf((Integer) row[0]);
+            LocalDate flDate = ((Date) row[1]).toLocalDate();
+            String originCityName = (String) row[2];
+            String destCityName = (String) row[3];
+            Query2ResultDto query2ResultDto = new Query2ResultDto(id, flDate, originCityName, destCityName);
+            query2ResultDtoList.add(query2ResultDto);
+        }
+
+        return query2ResultDtoList;
+    }
 
 }
