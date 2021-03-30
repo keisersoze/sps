@@ -2,6 +2,7 @@ package com.unive.spsproject.controller;
 
 import com.unive.spsproject.model.Query1ResultDto;
 import com.unive.spsproject.model.Query2ResultDto;
+import com.unive.spsproject.model.Query3ResultDto;
 import com.unive.spsproject.service.FlightService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +62,16 @@ public class FlightController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @Operation(summary = "Query 3")
+    @GetMapping(value = "/query-3",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<Query3ResultDto>> query3Controller(
+            @RequestParam("lowerDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate lowerDate,
+            @RequestParam("upperDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate upperDate,
+            @RequestParam("numReturn") @NotNull Integer numReturn
+    ) {
+        List<Query3ResultDto> result = flightService.query3(lowerDate, upperDate, numReturn);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 }
