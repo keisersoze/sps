@@ -1,6 +1,8 @@
 package com.unive.spsproject.service;
 
 import com.unive.spsproject.model.Query1ResultDto;
+import com.unive.spsproject.model.Query2ResultDto;
+import com.unive.spsproject.model.Query3ResultDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,5 +59,52 @@ public class FlightService {
         return query1ResultDtoList;
     }
 
+    @Transactional(readOnly = true)
+    public List<Query2ResultDto> query2(LocalDate lowerDate, LocalDate upperDate, Double minDelay) {
+        List<Object[]> rows = entityManager.createNativeQuery(
+                "SELECT f.id, f.fl_date, f.origin_city_name, f.dest_city_name\n" +
+                        "FROM flights f\n" +
+                        "WHERE f.arr_delay > :minDelay AND f.fl_date between :lowerDate and :upperDate")
+                .setParameter("minDelay", minDelay)
+                .setParameter("lowerDate", Date.valueOf(lowerDate))
+                .setParameter("upperDate", Date.valueOf(upperDate))
+                .getResultList();
+
+        List<Query2ResultDto> query2ResultDtoList = new ArrayList<>();
+        for (Object[] row: rows) {
+            long id = Long.valueOf((Integer) row[0]);
+            LocalDate flDate = ((Date) row[1]).toLocalDate();
+            String originCityName = (String) row[2];
+            String destCityName = (String) row[3];
+            Query2ResultDto query2ResultDto = new Query2ResultDto(id, flDate, originCityName, destCityName);
+            query2ResultDtoList.add(query2ResultDto);
+        }
+
+        return query2ResultDtoList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Query3ResultDto> query3(LocalDate lowerDate, LocalDate upperDate, Integer numReturn) {
+        List<Object> rows = entityManager.createNativeQuery(
+                "SELECT f.origin_airport_id\n"+
+                        "FROM flights f\n"+
+                        "WHERE f.fl_date between :lowerDate and :upperDate\n"+
+                        "GROUP BY f.origin_airport_id\n"+
+                        "ORDER BY CAST(SUM(CASE WHEN f.dep_delay > 0 THEN 1 ELSE 0 END) AS FLOAT)/COUNT(*) DESC\n"+
+                        "LIMIT :numReturn")
+                .setParameter("lowerDate", Date.valueOf(lowerDate))
+                .setParameter("upperDate", Date.valueOf(upperDate))
+                .setParameter("numReturn", numReturn)
+                .getResultList();
+
+        List<Query3ResultDto> query3ResultDtoList = new ArrayList<>();
+        for (Object row: rows) {
+            Integer originAirportId = (Integer) row;
+            Query3ResultDto query3ResultDto = new Query3ResultDto(originAirportId);
+            query3ResultDtoList.add(query3ResultDto);
+        }
+
+        return query3ResultDtoList;
+    }
 
 }
