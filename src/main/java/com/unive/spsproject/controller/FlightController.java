@@ -1,6 +1,8 @@
 package com.unive.spsproject.controller;
 
 import com.unive.spsproject.model.Query1ResultDto;
+import com.unive.spsproject.model.Query2ResultDto;
+import com.unive.spsproject.model.Query3ResultDto;
 import com.unive.spsproject.service.FlightService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +44,33 @@ public class FlightController {
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<List<Query1ResultDto>> query1Controller(
             @RequestParam("flightDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate flightDate,
-            @RequestParam("flightNumber") Integer flightNumber
+            @RequestParam("flightNumber") @NotNull Integer flightNumber
     ) {
         List<Query1ResultDto> result = flightService.query1(flightDate, flightNumber);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Query 2")
+    @GetMapping(value = "/query-2",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<Query2ResultDto>> query2Controller(
+            @RequestParam("lowerDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate lowerDate,
+            @RequestParam("upperDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate upperDate,
+            @RequestParam("minDelay") @NotNull Double minDelay
+    ) {
+        List<Query2ResultDto> result = flightService.query2(lowerDate, upperDate, minDelay);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Query 3")
+    @GetMapping(value = "/query-3",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<Query3ResultDto>> query3Controller(
+            @RequestParam("lowerDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate lowerDate,
+            @RequestParam("upperDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull LocalDate upperDate,
+            @RequestParam("numReturn") @NotNull Integer numReturn
+    ) {
+        List<Query3ResultDto> result = flightService.query3(lowerDate, upperDate, numReturn);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

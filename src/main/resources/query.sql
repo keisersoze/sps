@@ -26,7 +26,19 @@ GROUP BY F.ORIGIN_AIRPORT_ID
 ORDER BY SUM(CASE WHEN F.DEP_DELAY > (?) THEN 1 ELSE 0 END)/COUNT(*)
 LIMIT (?)
 
+// Query utilizzate
 
+SELECT f.arr_delay, f.dep_delay
+FROM flights f
+WHERE f.op_carrier_fl_num = :flightNumber AND f.fl_date = :flightDate
 
+SELECT f.id, f.fl_date, f.origin_city_name, f.dest_city_name
+FROM flights f
+WHERE f.arr_delay > :minDelay AND f.fl_date between :lowerDate and :upperDate
 
-
+SELECT f.origin_airport_id
+FROM flights f
+WHERE f.fl_date between :lowerDate and :upperDate
+GROUP BY f.origin_airport_id
+ORDER BY CAST(SUM(CASE WHEN f.dep_delay > 0 THEN 1 ELSE 0 END) AS FLOAT)/COUNT(*) DESC
+LIMIT :numReturn
