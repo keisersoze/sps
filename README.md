@@ -9,3 +9,9 @@
 
 1) Right click on "flight" table -> Import/export
 2) Delimiter="," , drop id, header=true, encoding=UTF-8
+
+
+initdb -U postgres -D /Users/filippo/Documents/University/SPS/project/pgdata
+pg_ctl -D /Users/filippo/Documents/University/SPS/project/pgdata st
+art
+pg_ctl -D /Users/filippo/Documents/University/SPS/project/pgdata stop
