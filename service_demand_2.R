@@ -13,16 +13,16 @@ system.R = 0.45
 
 disk.U_t = 1 - (data$X..DESKTOP.LSAC3CB.Disco.fisico._Total....Tempo.inattivit[startIndex:endIndex] / 100)
 disk.U = mean(disk.U_t)
-disk.D = disk.U / X
-disk.e = totDiskDepartures / totRequestSubmitted
-disk.avgServiceTime  = disk.D / disk.e
+disk.D = disk.U / X # (by the utilisation law and the forced flow law) Notes 3.2.3
+disk.e = totDiskDepartures / totRequestSubmitted # Estimating RVR as explained in the assignment
+disk.avgServiceTime = disk.D / disk.e  # From SD definition
 # disk.avgServiceTime2 = 
 
 cpu.U_t = 1 - (data$X..DESKTOP.LSAC3CB.Processore._Total....Tempo.inattivit[startIndex:endIndex] / 100)
 cpu.U = mean(cpu.U_t)
 cpu.D = cpu.U / X
 cpu.e = 1 # assumption
-cpu.avgServiceTime = system.R - (disk.e/cpu.e) * disk.avgServiceTime
+cpu.avgServiceTime = system.R - (disk.e/cpu.e) * disk.avgServiceTime # Suggested by Marin (and also from the paper)
 # cpu.avgServiceTime2 = cpu.D / cpu.e
 
 
