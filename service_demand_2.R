@@ -21,9 +21,10 @@ disk.avgServiceTime  = disk.D / disk.e
 cpu.U_t = 1 - (data$X..DESKTOP.LSAC3CB.Processore._Total....Tempo.inattivit[startIndex:endIndex] / 100)
 cpu.U = mean(cpu.U_t)
 cpu.D = cpu.U / X
-cpu.e = 1
-cpu.avgServiceTime = cpu.D / cpu.e
-# cpu.avgServiceTime2 = system.R - (disk.e/cpu.e) * disk.avgServiceTime
+cpu.e = 1 # assumption
+cpu.avgServiceTime = system.R - (disk.e/cpu.e) * disk.avgServiceTime
+# cpu.avgServiceTime2 = cpu.D / cpu.e
+
 
 
 
