@@ -1,8 +1,11 @@
 package com.unive.spsproject.service;
 
+import com.unive.spsproject.controller.FlightController;
 import com.unive.spsproject.model.Query1ResultDto;
 import com.unive.spsproject.model.Query2ResultDto;
 import com.unive.spsproject.model.Query3ResultDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +18,8 @@ import java.util.List;
 
 @Service
 public class FlightService {
+
+    Logger logger = LoggerFactory.getLogger(FlightService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -61,26 +66,30 @@ public class FlightService {
 
     @Transactional(readOnly = true)
     public List<Query2ResultDto> query2(LocalDate lowerDate, LocalDate upperDate, Double minDelay) {
-        List<Object[]> rows = entityManager.createNativeQuery(
-                "SELECT f.id, f.fl_date, f.origin_city_name, f.dest_city_name\n" +
-                        "FROM flights f\n" +
-                        "WHERE f.arr_delay > :minDelay AND f.fl_date between :lowerDate and :upperDate")
-                .setParameter("minDelay", minDelay)
-                .setParameter("lowerDate", Date.valueOf(lowerDate))
-                .setParameter("upperDate", Date.valueOf(upperDate))
-                .getResultList();
+        try{
+            List<Object[]> rows = entityManager.createNativeQuery(
+                    "SELECT SQL_NO_CACHE f.id, f.fl_date, f.origin_city_name, f.dest_city_name\n" +
+                            "FROM flights f\n" +
+                            "WHERE f.arr_delay > :minDelay AND f.fl_date between :lowerDate and :upperDate")
+                    .setParameter("minDelay", minDelay)
+                    .setParameter("lowerDate", Date.valueOf(lowerDate))
+                    .setParameter("upperDate", Date.valueOf(upperDate))
+                    .getResultList();
 
-        List<Query2ResultDto> query2ResultDtoList = new ArrayList<>();
-        for (Object[] row: rows) {
-            long id = Long.valueOf((Integer) row[0]);
-            LocalDate flDate = ((Date) row[1]).toLocalDate();
-            String originCityName = (String) row[2];
-            String destCityName = (String) row[3];
-            Query2ResultDto query2ResultDto = new Query2ResultDto(id, flDate, originCityName, destCityName);
-            query2ResultDtoList.add(query2ResultDto);
+            List<Query2ResultDto> query2ResultDtoList = new ArrayList<>();
+            for (Object[] row: rows) {
+                long id = Long.valueOf((Integer) row[0]);
+                LocalDate flDate = ((Date) row[1]).toLocalDate();
+                String originCityName = (String) row[2];
+                String destCityName = (String) row[3];
+                Query2ResultDto query2ResultDto = new Query2ResultDto(id, flDate, originCityName, destCityName);
+                query2ResultDtoList.add(query2ResultDto);
+            }
+            return query2ResultDtoList;
+        } catch(Exception e){
+            logger.error("Exception with database");
+            throw new RuntimeException("Exception with database");
         }
-
-        return query2ResultDtoList;
     }
 
     @Transactional(readOnly = true)
